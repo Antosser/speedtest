@@ -1,8 +1,8 @@
-# Speedtest
+# Speedtest 🚀
 
-Speedtest is a Rust-based command-line utility designed for measuring network speed between two computers. It provides two subcommands: `serve` and `test`, allowing users to set up a server on one machine and perform network speed tests from another machine.
+Speedtest is a Rust-based 🦀 command-line utility designed for measuring network speed between two computers. It provides two subcommands: `serve` and `test`, allowing users to set up a server on one machine and perform network speed tests from another machine.
 
-## Installation
+## Installation 📩
 
 To install Speedtest, use the following command:
 
@@ -10,7 +10,7 @@ To install Speedtest, use the following command:
 cargo install speedtest
 ```
 
-## Usage
+## Usage 🎯
 
 ```
 Rust-based network speed testing tool between two computers
@@ -56,7 +56,7 @@ Options:
   -h, --help             Print help
 ```
 
-## Examples
+## Examples 📄
 
 1. Set up a server on one computer:
 
@@ -70,7 +70,7 @@ speedtest serve 127.0.0.1:8080
 speedtest test 127.0.0.1:8080 --length 100
 ```
 
-## Output
+## Output 🧻
 
 ### Server
 
