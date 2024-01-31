@@ -3,7 +3,7 @@ name = "speedtest"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-description = "Speedtest between two computers"
+description = "Rust-based network speed testing tool between two computers"
 repository = "https://github.com/Antosser/speedtest"
 readme = "README.md"
 

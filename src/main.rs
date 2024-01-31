@@ -28,7 +28,7 @@ enum Mode {
     },
 }
 
-/// Speedtest between two computers
+/// Rust-based network speed testing tool between two computers
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
