@@ -6,7 +6,7 @@ use std::{
 };
 
 use clap::{Parser, Subcommand};
-use humansize::{format_size, DECIMAL};
+use humansize::{format_size, BINARY, DECIMAL};
 use itertools::Itertools;
 use tracing::{error, info, instrument};
 
@@ -75,11 +75,16 @@ fn client(socket_addr: &SocketAddrV4, mut length: u64) -> anyhow::Result<()> {
         stream.write_all(&buffer)?;
     }
     let elapsed_time = start_time.elapsed();
-    println!("Transferred data: {}", format_size(length, DECIMAL));
+    println!(
+        "Transferred data: {}, {}",
+        format_size(length, DECIMAL),
+        format_size(length, BINARY)
+    );
     println!("Elapsed time: {:?}", elapsed_time);
     println!(
-        "Transfer speed: {}/s",
-        format_size((length as f64 / elapsed_time.as_secs_f64()) as u64, DECIMAL)
+        "Transfer speed: {}/s, {}/s",
+        format_size((length as f64 / elapsed_time.as_secs_f64()) as u64, DECIMAL),
+        format_size((length as f64 / elapsed_time.as_secs_f64()) as u64, BINARY)
     );
 
     Ok(())
