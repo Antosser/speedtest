@@ -31,9 +31,6 @@ pub fn client(socket_addr: &SocketAddrV4, length: u64) -> anyhow::Result<()> {
             remaining = 0;
         }
     }
-    // for _ in 0..length {
-    //     stream.write_all(&buffer)?;
-    // }
     let elapsed_time = start_time.elapsed();
     let bytes_per_second = (length as f64 / elapsed_time.as_secs_f64()) as u64;
     println!(
