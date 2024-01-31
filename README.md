@@ -12,51 +12,49 @@ cargo install speedtest
 
 ## Usage
 
-### Overview
+```
+Rust-based network speed testing tool between two computers
 
-```bash
-speedtest <COMMAND>
+Usage: speedtest <COMMAND>
+
+Commands:
+  serve  Listen to incoming TCP connections on the given socket address
+  test   Connect to a TCP server with the given socket address
+  help   Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
 ```
 
-### Commands
+### Serve
 
-#### `serve`
+```
+Listen to incoming TCP connections on the given socket address
 
-```bash
-speedtest serve <SOCKET>
+Usage: speedtest serve <SOCKET>
+
+Arguments:
+  <SOCKET>  Socket address
+
+Options:
+  -h, --help  Print help
 ```
 
-Set up a server on one computer to receive network speed tests from another computer.
+### Test
 
-##### Arguments
-
-- `<SOCKET>`: Socket address for the server.
-
-##### Options
-
-- `-h, --help`: Print help.
-
-#### `test`
-
-```bash
-speedtest test [OPTIONS] <SOCKET>
 ```
+Connect to a TCP server with the given socket address
 
-Perform a network speed test from one computer to a server on another computer.
+Usage: speedtest test [OPTIONS] <SOCKET>
 
-##### Arguments
+Arguments:
+  <SOCKET>  Socket address
 
-- `<SOCKET>`: Socket address for the server.
-
-##### Options
-
-- `-l, --length <LENGTH>`: Specify the amount of data to send to the server in megabytes (default: 10).
-- `-h, --help`: Print help.
-
-### Global Options
-
-- `-h, --help`: Print help.
-- `-V, --version`: Print version.
+Options:
+  -l, --length <LENGTH>  How much bytes to send to the server in MEGABYTES [default: 10]
+  -h, --help             Print help
+```
 
 ## Examples
 
@@ -66,8 +64,8 @@ Perform a network speed test from one computer to a server on another computer.
 speedtest serve 127.0.0.1:8080
 ```
 
-2. Run a speed test from another computer:
+2. Run a speed test from another computer (by sending 100 MB (Megabytes)):
 
 ```bash
-speedtest test 127.0.0.1:8080
+speedtest test 127.0.0.1:8080 --length 100
 ```
