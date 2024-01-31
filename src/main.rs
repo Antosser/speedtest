@@ -12,11 +12,14 @@ use tracing::{error, info, instrument};
 
 #[derive(Subcommand, Clone, PartialEq, Debug)]
 enum Mode {
+    /// Listen to incoming TCP connections on the given socket address
     #[command(name = "serve")]
     Server {
         /// Socket address
         socket: SocketAddrV4,
     },
+
+    /// Connect to a TCP server with the given socket address
     #[command(name = "test")]
     Client {
         /// Socket address
