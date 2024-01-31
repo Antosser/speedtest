@@ -46,13 +46,13 @@ Options:
 ```
 Connect to a TCP server with the given socket address
 
-Usage: speedtest test [OPTIONS] <SOCKET>
+Usage: speedtest.exe test [OPTIONS] <SOCKET>
 
 Arguments:
   <SOCKET>  Socket address
 
 Options:
-  -l, --length <LENGTH>  How much bytes to send to the server in MEGABYTES [default: 10]
+  -l, --length <LENGTH>  How much bytes to send to the server [default: 10MB]
   -h, --help             Print help
 ```
 
@@ -83,7 +83,7 @@ speedtest test 127.0.0.1:8080 --length 100
 ### Client
 
 ```bash
-~> speedtest test 127.0.0.1:1234 -l 100
+~> speedtest test 127.0.0.1:1234 -l 100MB
 2024-01-31T01:01:12.014113Z  INFO client{socket_addr=127.0.0.1:1234 length=100}: speedtest: Stream accepted
 2024-01-31T01:01:12.014229Z  INFO client{socket_addr=127.0.0.1:1234 length=100}: speedtest: Writing data...
 Transferred data: 100 MB

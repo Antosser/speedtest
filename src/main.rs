@@ -5,10 +5,12 @@ use std::{
     time::Instant,
 };
 
+use anyhow::anyhow;
 use clap::{Parser, Subcommand};
 use colored::Colorize;
 use humansize::{format_size, BINARY, DECIMAL};
 use itertools::Itertools;
+use rand::Rng;
 use tracing::{error, info, instrument};
 
 #[derive(Subcommand, Clone, PartialEq, Debug)]
@@ -26,9 +28,9 @@ enum Mode {
         /// Socket address
         socket: SocketAddrV4,
 
-        /// How much bytes to send to the server in MEGABYTES
-        #[arg(short, long, default_value_t = 10)]
-        length: u64,
+        /// How many bytes to send to the server
+        #[arg(short, long, default_value = "10MB")]
+        length: String,
     },
 }
 
@@ -50,8 +52,8 @@ fn server(socket_addr: &SocketAddrV4) -> anyhow::Result<()> {
             if let Err(e) = || -> anyhow::Result<()> {
                 let mut stream = stream?;
                 info!("Incoming connection");
-                let mut buffer = [0u8; 100_000];
-                while stream.read(&mut buffer)? != 0 {}
+                let mut buffer = Box::new([0u8; 100_000]);
+                while stream.read(&mut *buffer)? != 0 {}
 
                 Ok(())
             }() {
@@ -64,23 +66,36 @@ fn server(socket_addr: &SocketAddrV4) -> anyhow::Result<()> {
 }
 
 #[instrument]
-fn client(socket_addr: &SocketAddrV4, length_millions: u64) -> anyhow::Result<()> {
+fn client(socket_addr: &SocketAddrV4, length: u64) -> anyhow::Result<()> {
+    const BUFFER_SIZE: u64 = 1_000_000;
+
     let mut stream = TcpStream::connect(socket_addr)?;
     info!("Stream accepted");
 
-    let buffer = (0..255).cycle().take(1_000_000).collect_vec();
+    let mut rng = rand::thread_rng();
+    let buffer = (0..BUFFER_SIZE).map(|_| rng.gen::<u8>()).collect_vec();
     info!("Writing data...");
     let start_time = Instant::now();
-    for _ in 0..length_millions {
-        stream.write_all(&buffer)?;
+
+    let mut remaining = length;
+    while remaining > 0 {
+        if remaining > BUFFER_SIZE {
+            stream.write_all(&buffer)?;
+            remaining -= BUFFER_SIZE;
+        } else {
+            stream.write_all(&buffer[0usize..remaining as usize])?;
+            remaining = 0;
+        }
     }
+    // for _ in 0..length {
+    //     stream.write_all(&buffer)?;
+    // }
     let elapsed_time = start_time.elapsed();
-    let bytes_per_second =
-        (length_millions as f64 * 1_000_000. / elapsed_time.as_secs_f64()) as u64;
+    let bytes_per_second = (length as f64 / elapsed_time.as_secs_f64()) as u64;
     println!(
         "Transferred data: {}, {}",
-        format_size(length_millions * 1_000_000, DECIMAL).cyan(),
-        format_size(length_millions * 1_000_000, BINARY).magenta()
+        format_size(length, DECIMAL).cyan(),
+        format_size(length, BINARY).magenta()
     );
     println!("Elapsed time: {}", format!("{:?}", elapsed_time).cyan());
     println!(
@@ -103,7 +118,10 @@ fn main() -> anyhow::Result<()> {
         Mode::Client {
             socket: socket_addr,
             length,
-        } => client(&socket_addr, length)?,
+        } => client(
+            &socket_addr,
+            parse_size::parse_size(length).map_err(|e| anyhow!(e))?,
+        )?,
     }
 
     Ok(())
