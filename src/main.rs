@@ -50,7 +50,8 @@ fn server(socket_addr: &SocketAddrV4) -> anyhow::Result<()> {
             if let Err(e) = || -> anyhow::Result<()> {
                 let mut stream = stream?;
                 info!("Incoming connection");
-                stream.read_to_end(&mut Vec::new())?;
+                let mut buffer = [0u8; 100_000];
+                while stream.read(&mut buffer)? != 0 {}
 
                 Ok(())
             }() {
@@ -63,24 +64,23 @@ fn server(socket_addr: &SocketAddrV4) -> anyhow::Result<()> {
 }
 
 #[instrument]
-fn client(socket_addr: &SocketAddrV4, mut length: u64) -> anyhow::Result<()> {
-    length *= 1_000_000;
-
+fn client(socket_addr: &SocketAddrV4, length_millions: u64) -> anyhow::Result<()> {
     let mut stream = TcpStream::connect(socket_addr)?;
     info!("Stream accepted");
 
-    let buffer = (0..255).cycle().take(10_000).collect_vec();
+    let buffer = (0..255).cycle().take(1_000_000).collect_vec();
     info!("Writing data...");
     let start_time = Instant::now();
-    for _ in (0..length).step_by(buffer.len()) {
+    for _ in 0..length_millions {
         stream.write_all(&buffer)?;
     }
     let elapsed_time = start_time.elapsed();
-    let bytes_per_second = (length as f64 / elapsed_time.as_secs_f64()) as u64;
+    let bytes_per_second =
+        (length_millions as f64 * 1_000_000. / elapsed_time.as_secs_f64()) as u64;
     println!(
         "Transferred data: {}, {}",
-        format_size(length, DECIMAL).cyan(),
-        format_size(length, BINARY).magenta()
+        format_size(length_millions * 1_000_000, DECIMAL).cyan(),
+        format_size(length_millions * 1_000_000, BINARY).magenta()
     );
     println!("Elapsed time: {}", format!("{:?}", elapsed_time).cyan());
     println!(
