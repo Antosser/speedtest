@@ -69,3 +69,24 @@ speedtest serve 127.0.0.1:8080
 ```bash
 speedtest test 127.0.0.1:8080 --length 100
 ```
+
+## Output
+
+### Server
+
+```bash
+~> speedtest serve 0.0.0.0:1234
+2024-01-31T01:00:58.464460Z  INFO server{socket_addr=0.0.0.0:1234}: speedtest: Listening...
+2024-01-31T01:01:12.014269Z  INFO speedtest: Incoming connection
+```
+
+### Client
+
+```bash
+~> speedtest test 127.0.0.1:1234 -l 100
+2024-01-31T01:01:12.014113Z  INFO client{socket_addr=127.0.0.1:1234 length=100}: speedtest: Stream accepted
+2024-01-31T01:01:12.014229Z  INFO client{socket_addr=127.0.0.1:1234 length=100}: speedtest: Writing data...
+Transferred data: 100 MB
+Elapsed time: 123.7696ms
+Transfer speed: 807.95 MB/s
+```
