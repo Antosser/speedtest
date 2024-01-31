@@ -6,7 +6,7 @@ license = "MIT"
 description = "Rust-based network speed testing tool between two computers"
 repository = "https://github.com/Antosser/speedtest"
 readme = "README.md"
-keywords = ["speedtest", "bandwidth", "cli", "cross-platform", "speed", "test"]
+keywords = ["speedtest", "bandwidth", "cli", "speed", "test"]
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
