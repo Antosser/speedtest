@@ -423,6 +423,7 @@ dependencies = [
  "rand",
  "tap",
  "tracing",
+ "tracing-error",
  "tracing-subscriber",
 ]
 

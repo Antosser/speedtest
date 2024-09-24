@@ -5,6 +5,9 @@ use client::client;
 use color_eyre::eyre::eyre;
 use color_eyre::eyre::WrapErr; // Needed for `.context()`
 use server::server;
+use tracing_error::ErrorLayer;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
 
 use std::net::SocketAddrV4;
 
@@ -42,7 +45,10 @@ struct Args {
 
 fn main() -> color_eyre::Result<()> {
     color_eyre::install().context("Failed to install color_eyre")?;
-    tracing_subscriber::fmt().init();
+    tracing_subscriber::registry()
+        .with(ErrorLayer::default())
+        .with(tracing_subscriber::fmt::layer().with_target(false))
+        .init();
     let args = Args::parse();
 
     match args.mode {
