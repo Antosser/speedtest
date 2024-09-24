@@ -4,16 +4,18 @@ use std::{
     time::Instant,
 };
 
+use color_eyre::eyre::WrapErr;
 use colored::Colorize;
 use humansize::{format_size, BINARY, DECIMAL};
 use itertools::Itertools;
 use rand::Rng;
-use tracing::info;
+use tracing::{info, instrument};
 
+#[instrument]
 pub fn client(socket_addr: &SocketAddrV4, length: u64) -> color_eyre::Result<()> {
     const BUFFER_SIZE: u64 = 1_000_000;
 
-    let mut stream = TcpStream::connect(socket_addr)?;
+    let mut stream = TcpStream::connect(socket_addr).context("Failed to connect to the server")?;
     info!("Stream accepted");
 
     let mut rng = rand::thread_rng();
@@ -24,10 +26,14 @@ pub fn client(socket_addr: &SocketAddrV4, length: u64) -> color_eyre::Result<()>
     let mut remaining = length;
     while remaining > 0 {
         if remaining > BUFFER_SIZE {
-            stream.write_all(&buffer)?;
+            stream
+                .write_all(&buffer)
+                .context("Failed to write data to the server")?;
             remaining -= BUFFER_SIZE;
         } else {
-            stream.write_all(&buffer[0usize..remaining as usize])?;
+            stream
+                .write_all(&buffer[0usize..remaining as usize])
+                .context("Failed to write the remaining data to the server")?;
             remaining = 0;
         }
     }

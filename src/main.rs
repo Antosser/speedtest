@@ -3,6 +3,7 @@ mod server;
 
 use client::client;
 use color_eyre::eyre::eyre;
+use color_eyre::eyre::WrapErr; // Needed for `.context()`
 use server::server;
 
 use std::net::SocketAddrV4;
@@ -40,21 +41,24 @@ struct Args {
 }
 
 fn main() -> color_eyre::Result<()> {
-    color_eyre::install()?;
+    color_eyre::install().context("Failed to install color_eyre")?;
     tracing_subscriber::fmt().init();
     let args = Args::parse();
 
     match args.mode {
         Mode::Server {
             socket: socket_addr,
-        } => server(&socket_addr)?,
+        } => server(&socket_addr).context("Server mode failed to start")?,
         Mode::Client {
             socket: socket_addr,
             length,
         } => client(
             &socket_addr,
-            parse_size::parse_size(length).map_err(|e| eyre!(e))?,
-        )?,
+            parse_size::parse_size(length)
+                .map_err(|e| eyre!(e))
+                .context("Failed to parse the length argument")?,
+        )
+        .context("Client mode failed to run")?,
     }
 
     Ok(())
