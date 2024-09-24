@@ -2,11 +2,11 @@ mod client;
 mod server;
 
 use client::client;
+use color_eyre::eyre::eyre;
 use server::server;
 
 use std::net::SocketAddrV4;
 
-use anyhow::anyhow;
 use clap::{Parser, Subcommand};
 
 #[derive(Subcommand, Clone, PartialEq, Debug)]
@@ -39,7 +39,8 @@ struct Args {
     mode: Mode,
 }
 
-fn main() -> anyhow::Result<()> {
+fn main() -> color_eyre::Result<()> {
+    color_eyre::install()?;
     tracing_subscriber::fmt().init();
     let args = Args::parse();
 
@@ -52,7 +53,7 @@ fn main() -> anyhow::Result<()> {
             length,
         } => client(
             &socket_addr,
-            parse_size::parse_size(length).map_err(|e| anyhow!(e))?,
+            parse_size::parse_size(length).map_err(|e| eyre!(e))?,
         )?,
     }
 

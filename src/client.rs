@@ -10,7 +10,7 @@ use itertools::Itertools;
 use rand::Rng;
 use tracing::info;
 
-pub fn client(socket_addr: &SocketAddrV4, length: u64) -> anyhow::Result<()> {
+pub fn client(socket_addr: &SocketAddrV4, length: u64) -> color_eyre::Result<()> {
     const BUFFER_SIZE: u64 = 1_000_000;
 
     let mut stream = TcpStream::connect(socket_addr)?;
